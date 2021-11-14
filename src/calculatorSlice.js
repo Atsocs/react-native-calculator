@@ -1,14 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { evaluate } from "mathjs";
-import Snackbar from 'react-native-snackbar';
 
 const initialState = {
   visor: "0",
   mode: "replace", // "replace" | "append"
-  snackbar: {
-    visible: false,
-    message: "Formato usado inválido",
-  },
 };
 
 const calculatorSlice = createSlice({
@@ -28,14 +23,12 @@ const calculatorSlice = createSlice({
           return;
         case "=":
           try {
-            const result = evaluate(state.visor);
+            const visorText = state.visor.replace(/,/g, ".");
+            const result = evaluate(visorText);
             console.log(result);
-            state.visor = result.toString();
+            state.visor = result.toString().replace(/\./g, ",");
           } catch (error) {
-            Snackbar.show({
-              text: "Hello world",
-              duration: Snackbar.LENGTH_SHORT,
-            });
+            console.log("Invalid format");
           }
           return;
         default:
