@@ -6,6 +6,20 @@ const initialState = {
   mode: "replace", // "replace" | "append"
 };
 
+function isnumeric(d) {
+  return d.length === 1 && "0,123456789".includes(d);
+}
+
+function lastNumber(string) {
+  let i = string.length - 1;
+  while (i >= 0 && isnumeric(string[i])) {
+    i--;
+  }
+  return string.slice(i + 1, string.length);
+}
+
+const precision = 15;
+
 const calculatorSlice = createSlice({
   name: "calculator",
   initialState,
@@ -21,12 +35,20 @@ const calculatorSlice = createSlice({
             state.visor = "0";
           }
           return;
+        case ",":
+          if (!lastNumber(state.visor).includes(",")) {
+            state.visor += ",";
+            state.mode = "append";
+          }
+          return;
         case "=":
           try {
             const visorText = state.visor.replace(/,/g, ".");
             const result = evaluate(visorText);
             console.log(result);
-            state.visor = result.toString().replace(/\./g, ",");
+            state.visor = parseFloat(result.toPrecision(precision))
+              .toString()
+              .replace(/\./g, ",");
           } catch (error) {
             console.log("Invalid format");
           }
