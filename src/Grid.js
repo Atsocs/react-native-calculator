@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { View } from "react-native";
 
 export default function Grid({ children: ch, rows, cols, style }) {

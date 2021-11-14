@@ -1,8 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
-import counterSlice from "./counterSlice";
+import calculatorSlice from "./calculatorSlice";
 
 const store = configureStore({
-  reducer: counterSlice.reducer,
+  reducer: calculatorSlice.reducer,
 });
 
 store.subscribe(() => console.log(store.getState()));

@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, TouchableOpacity, StyleSheet } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
-import { decrement, increment, incrementByAmount } from "./counterSlice";
+import { useDispatch } from "react-redux";
+import { keyPress } from "./calculatorSlice";
 
 export default function CalculatorButton({ children: value }) {
   const dispatch = useDispatch();
@@ -10,8 +10,7 @@ export default function CalculatorButton({ children: value }) {
     <TouchableOpacity
       style={styles.button}
       onPress={() => {
-        console.log("pressed: " + value);
-        dispatch(incrementByAmount(parseInt(value)));
+        dispatch(keyPress(value));
       }}
     >
       <Text style={styles.text}>{value}</Text>
@@ -27,7 +26,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#eee",
     margin: 10,
     aspectRatio: 1,
-    borderRadius: 100,
+    borderRadius: 1000,
   },
   text: {
     fontSize: 25,
