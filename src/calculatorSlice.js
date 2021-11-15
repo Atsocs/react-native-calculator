@@ -102,7 +102,40 @@ const calculatorSlice = createSlice({
       const key = action.payload;
       const parCount = parenthesisStatus(state.visor);
       const lastChar = state.visor[state.visor.length - 1];
+      if (state.visor === "Infinity" || state.visor === "NaN") {
+        return initialState;
+      }
       switch (key) {
+        case "+":
+        case "-":
+        case "*":
+        case "/":
+          if (state.mode === "replace") {
+            state.mode = "append";
+            return;
+          }
+          if ("+-*/".includes(lastChar)) {
+            const newExpression =
+              state.visor.slice(0, state.visor.length - 1) + key;
+            if (
+              !newExpression.includes("(*") &&
+              !newExpression.includes("(/")
+            ) {
+              state.visor = newExpression;
+            }
+            return;
+          }
+          if (isNumeric(lastChar) || lastChar === ")") {
+            state.visor += key;
+            return;
+          }
+
+          if (lastChar === "(" && "+-".includes(key)) {
+            state.visor += key;
+            return;
+          }
+
+          return;
         case "C":
           return initialState;
         case "←":
@@ -113,11 +146,17 @@ const calculatorSlice = createSlice({
           return;
         case ",":
           if (!lastNumber(state.visor).includes(",")) {
+            if (!isNumeric(lastChar)) {
+              state.visor += "0";
+            }
             state.visor += ",";
             state.mode = "append";
           }
           return;
         case "factor":
+          if (state.visor.includes("e")) {
+            return;
+          }
           if (allNumeric(state.visor)) {
             state.visor = factor(state.visor).toString();
             return;
@@ -154,6 +193,12 @@ const calculatorSlice = createSlice({
             state.mode = "append";
             return;
           }
+
+          if ("+*-/".includes(lastChar)) {
+            state.visor += "(";
+            state.mode = "append";
+            return;
+          }
           return;
         case "=":
           const saveVisor = state.visor;
@@ -172,6 +217,9 @@ const calculatorSlice = createSlice({
           }
           return;
         default:
+          if (lastChar === ")") {
+            state.visor += "*";
+          }
           if (state.mode === "append") state.visor += key;
           if (state.mode === "replace") {
             state.visor = key;
